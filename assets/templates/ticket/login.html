@@ -1,0 +1,21 @@
+{% extends 'ticket/base.html' %}
+{% block body %}
+<!-- Login Form -->
+<div class="container my-3">
+    <h2><span style="border-bottom: 2px solid black;">Login here</span></h2>
+    <br>
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Name</label>
+            <input type="text" required class="form-control" id="exampleInputEmail1" name="uid" aria-describedby="emailHelp">
+            <div id="emailHelp" class="form-text"></div>
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Password</label>
+            <input type="password" required class="form-control" id="exampleInputPassword1" name="pwd">
+        </div>
+        <button type="submit" class="btn btn-dark">Submit</button>
+    </form>
+</div>
+{% endblock body %}

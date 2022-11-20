@@ -1,0 +1,30 @@
+{% extends 'ticket/base.html' %}
+{% block body %}
+<!-- Booking Form -->
+<div class="container my-3">
+    <h2><span style="border-bottom: 2px solid black;">Tickets</span></h2>
+    <br>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Reference ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Contact</th>
+                <th scope="col">Tickets</th>
+                <th scope="col">Ticket URL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+            <tr>
+                <th scope="row">{{ticket.refId}}</th>
+                <td>{{ticket.name}}</td>
+                <td>{{ticket.contact}}</td>
+                <td>{{ticket.tickets}}</td>
+                <td><a target="_blank" href="{{ticket.url}}">Ticket</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock body %}
