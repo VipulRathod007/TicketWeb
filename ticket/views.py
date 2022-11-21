@@ -74,7 +74,7 @@ def book(request):
         templatePath = os.path.join(settings.BASE_DIR, 'assets/front.png')
         ticketsPath = os.path.join(settings.BASE_DIR, 'assets/Tickets')
         factory = TicketFactory(name, contact, seats, ticketCount, templatePath)
-        newTicketPath = os.path.join(ticketsPath, f'{name}_{factory.Ticket.ID}.pdf')
+        newTicketPath = os.path.join(settings.STATIC_ROOT, f'{name}_{factory.Ticket.ID}.pdf')
         factory.AddrSeats = (1600, 380)
         factory.AddrSeatCount = (1850, 380)
         factory.AddrTicketID = (1675, 445)
