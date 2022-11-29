@@ -32,7 +32,7 @@ class Ticket:
 
     @property
     def QRData(self):
-        return self.__mSeatCount + self.__mContact
+        return self.__mTicketID + self.__mContact
 
 
 class TicketFactory:

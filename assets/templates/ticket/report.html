@@ -21,7 +21,7 @@
                 <td>{{ticket.name}}</td>
                 <td>{{ticket.contact}}</td>
                 <td>{{ticket.tickets}}</td>
-                <td><a target="_blank" href="{{ticket.url}}">Ticket</a></td>
+                <td><a target="_blank" href="{% url 'show-ticket' %}?q={{ticket.url}}">Show</a></td>
             </tr>
             {% endfor %}
         </tbody>

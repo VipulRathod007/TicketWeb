@@ -43,6 +43,37 @@ def report(request):
         return HttpResponse('Un-authorized operation')
 
 
+def find(request):
+    if 'meta' in request.session:
+        if request.method == 'GET':
+            return render(request, 'ticket/findTicket.html', context={'tabTitle': 'Find Tickets'})
+        else:
+            ticketNum = int(request.POST['ticket'])
+            tickets = Ticket.objects.filter(refId=ticketNum).values('name', 'contact', 'refId', 'url').annotate(tickets=Count('refId')).order_by()
+            context = {
+                'tickets': tickets,
+                'tabTitle': 'Reports'
+            }
+            return render(request, 'ticket/report.html', context=context)
+    else:
+        return HttpResponse('Un-authorized operation')
+
+
+def show(request):
+    if 'meta' in request.session:
+        if request.method == 'GET':
+            ticketName = request.GET['q']
+            if ticketName is not None and len(ticketName) > 0:
+                return render(request, 'ticket/showTicket.html',
+                              context={
+                                  'tabTitle': f'{ticketName}',
+                                  'url': ticketName
+                              })
+            else:
+                return HttpResponse('Invalid request')
+        return HttpResponse('Un-authorized operation')
+
+
 def book(request):
     if request.method == 'POST':
         name = request.POST['name']
@@ -72,9 +103,9 @@ def book(request):
         else:
             seats = f'{row}{fromNum} - {row}{to}'
         templatePath = os.path.join(settings.BASE_DIR, 'assets/front.png')
-        ticketsPath = os.path.join(settings.BASE_DIR, 'assets/Tickets')
         factory = TicketFactory(name, contact, seats, ticketCount, templatePath)
-        newTicketPath = os.path.join(settings.STATIC_ROOT, f'{name}_{factory.Ticket.ID}.pdf')
+        # newTicketPath = os.path.join(settings.STATIC_ROOT, f'{name}_{factory.Ticket.ID}.jpg')
+        newTicketPath = os.path.join(settings.STATICFILES_DIRS[0], 'tickets', f'{name}_{factory.Ticket.ID}.jpg')
         factory.AddrSeats = (1600, 380)
         factory.AddrSeatCount = (1850, 380)
         factory.AddrTicketID = (1675, 445)
@@ -88,11 +119,11 @@ def book(request):
                 newTicket.refId = factory.Ticket.ID
                 newTicket.seatRow = row
                 newTicket.seatNum = seat
-                newTicket.url = newTicketPath
+                newTicket.url = f'{name}_{factory.Ticket.ID}.jpg'
                 newTicket.save()
             factory.generate().save(newTicketPath)
             messages.success(request, 'Ticket booked successfully!')
-            return redirect(to='home')
+            return redirect(to=f'show?q={name}_{factory.Ticket.ID}.jpg')
         except Exception:
             targets = Ticket.objects.filter(seatRow=row)
             if len(target) > 0:
