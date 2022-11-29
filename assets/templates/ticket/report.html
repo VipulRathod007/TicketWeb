@@ -20,7 +20,7 @@
                 <th scope="row">{{ticket.refId}}</th>
                 <td>{{ticket.name}}</td>
                 <td>{{ticket.contact}}</td>
-                <td>{{ticket.tickets}}</td>
+                <td>{{ticket.total}}</td>
                 <td><a target="_blank" href="{% url 'show-ticket' %}?q={{ticket.url}}">Show</a></td>
             </tr>
             {% endfor %}

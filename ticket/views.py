@@ -1,9 +1,8 @@
+import io
 import json
 import os.path
+from datetime import datetime
 
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.db.models import Count
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib import messages
 from django.conf import settings
@@ -14,6 +13,20 @@ from .models import Ticket
 
 with open('config.json', 'r') as file:
     config = json.load(file)
+
+
+def __generateTicket(inTicket: Ticket) -> HttpResponse:
+    templatePath = os.path.join(settings.BASE_DIR, 'assets/front.png')
+    factory = TicketFactory(inTicket.name, inTicket.contact, inTicket.seats, inTicket.total, inTicket.refId, templatePath)
+    factory.AddrSeats = (1600, 380)
+    factory.AddrSeatCount = (1850, 380)
+    factory.AddrTicketID = (1675, 445)
+    factory.AddrTicketQRCode = (1590, 85)
+    factory.AddrBuyerName = (110, 325)
+    buff = io.BytesIO()
+    factory.generate().save(buff, 'jpeg')
+    response = HttpResponse(buff.getvalue(), content_type='image/jpeg')
+    return response
 
 
 def home(request):
@@ -33,7 +46,7 @@ def home(request):
 
 def report(request):
     if 'meta' in request.session:
-        tickets = Ticket.objects.values('name', 'contact', 'refId', 'url').annotate(tickets=Count('refId')).order_by()
+        tickets = Ticket.objects.all().order_by('name')
         context = {
             'tickets': tickets,
             'tabTitle': 'Reports'
@@ -49,7 +62,7 @@ def find(request):
             return render(request, 'ticket/findTicket.html', context={'tabTitle': 'Find Tickets'})
         else:
             ticketNum = int(request.POST['ticket'])
-            tickets = Ticket.objects.filter(refId=ticketNum).values('name', 'contact', 'refId', 'url').annotate(tickets=Count('refId')).order_by()
+            tickets = Ticket.objects.filter(refId=ticketNum)
             context = {
                 'tickets': tickets,
                 'tabTitle': 'Reports'
@@ -64,11 +77,8 @@ def show(request):
         if request.method == 'GET':
             ticketName = request.GET['q']
             if ticketName is not None and len(ticketName) > 0:
-                return render(request, 'ticket/showTicket.html',
-                              context={
-                                  'tabTitle': f'{ticketName}',
-                                  'url': ticketName
-                              })
+                ticket = Ticket.objects.filter(url=ticketName).first()
+                return __generateTicket(ticket)
             else:
                 return HttpResponse('Invalid request')
         return HttpResponse('Un-authorized operation')
@@ -102,36 +112,26 @@ def book(request):
             seats = f'{row}{fromNum}'
         else:
             seats = f'{row}{fromNum} - {row}{to}'
-        templatePath = os.path.join(settings.BASE_DIR, 'assets/front.png')
-        factory = TicketFactory(name, contact, seats, ticketCount, templatePath)
-        # newTicketPath = os.path.join(settings.STATIC_ROOT, f'{name}_{factory.Ticket.ID}.jpg')
-        newTicketPath = os.path.join(settings.STATICFILES_DIRS[0], 'tickets', f'{name}_{factory.Ticket.ID}.jpg')
-        factory.AddrSeats = (1600, 380)
-        factory.AddrSeatCount = (1850, 380)
-        factory.AddrTicketID = (1675, 445)
-        factory.AddrTicketQRCode = (1590, 85)
-        factory.AddrBuyerName = (110, 325)
         try:
-            for seat in range(fromNum, to + 1):
-                newTicket = Ticket()
-                newTicket.name = name
-                newTicket.contact = contact
-                newTicket.refId = factory.Ticket.ID
-                newTicket.seatRow = row
-                newTicket.seatNum = seat
-                newTicket.url = f'{name}_{factory.Ticket.ID}.jpg'
-                newTicket.save()
-            factory.generate().save(newTicketPath)
-            messages.success(request, 'Ticket booked successfully!')
-            return redirect(to=f'show?q={name}_{factory.Ticket.ID}.jpg')
-        except Exception:
+            newTicket = Ticket()
+            newTicket.name = name
+            newTicket.contact = contact
+            newTicket.refId = int(datetime.now().timestamp())
+            newTicket.seatRow = row
+            newTicket.seatNum = int(''.join([str(_) for _ in range(fromNum, to + 1)]))
+            newTicket.url = f'{name}_{newTicket.refId}.jpg'
+            newTicket.seats = seats
+            newTicket.save()
+            return __generateTicket(newTicket)
+        except Exception as e:
             targets = Ticket.objects.filter(seatRow=row)
-            if len(target) > 0:
+            if len(targets) > 0:
                 for seat in range(fromNum, to + 1):
                     target = Ticket.objects.filter(seatRow=row).filter(seatNum=seat).first()
                     if target is not None:
                         target.delete()
             messages.error(request, 'Failed to generate ticket. Report issue')
+            print(e)
             return redirect(to='home')
     else:
         messages.error(request, 'Method not allowed')

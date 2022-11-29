@@ -8,11 +8,11 @@ from datetime import datetime
 class Ticket:
     """Represents Ticket class"""
 
-    def __init__(self, inBuyerName: str, inContactNum: int, inSeatCount: int):
+    def __init__(self, inBuyerName: str, inContactNum: int, inSeatCount: int, inTicketID: int):
         self.__mBuyerName = inBuyerName
         self.__mContact = inContactNum
         self.__mSeatCount = inSeatCount
-        self.__mTicketID = int(datetime.now().timestamp())
+        self.__mTicketID = inTicketID
 
     @property
     def Buyer(self):
@@ -38,14 +38,14 @@ class Ticket:
 class TicketFactory:
     """Represents Tickets Factory class"""
 
-    def __init__(self, inBuyerName: str, inContactNum: int, inSeats: str, inSeatCount: int, inTemplatePath: str):
+    def __init__(self, inBuyerName: str, inContactNum: int, inSeats: str, inSeatCount: int, inTicketID: int, inTemplatePath: str):
         self.__mSeatsAddr = (0, 0)
         self.__mBuyerNameAddr = (0, 0)
         self.__mTicketQRCodeAddr = (0, 0)
         self.__mTicketIDAddr = (0, 0)
         self.__mSeatCountAddr = (0, 0)
         self.__mSeats = inSeats
-        self.__mTicket = Ticket(inBuyerName, inContactNum, inSeatCount)
+        self.__mTicket = Ticket(inBuyerName, inContactNum, inSeatCount, inTicketID)
         self.__mTemplatePath = inTemplatePath
 
     def generate(self) -> Image:

@@ -16,7 +16,10 @@
 
 <body data-spy="scroll" data-target=".site-navbar-target" data-offset="300">
     <div class="w-100" style="position: absolute; top: 50%; transform: translateY(-50%);">
-        <img src="{% static 'tickets' %}/{{url}}" class="img-fluid" alt="">
+        <img src="{% static 'front.png' %}" style="z-index: -1;" class="img-fluid" alt="">
+        <p style="color: white; font-family: sans-serif; font-weight: bold; letter-spacing: .25rem; position: absolute; top: 50%; transform: translateX(100%);">{{ticket.name}}</p>
+        <p style="color: white; font-family: sans-serif; font-weight: bold; letter-spacing: .25rem; position: absolute; top: 60%; right: 17.5%;">{{ticket.seats}}</p>
+        <!-- <p style="color: white; font-family: sans-serif; font-weight: bold; letter-spacing: .25rem; position: absolute; top: 50%; transform: translateX(100%);">{{ticket.name}}</p> -->
     </div>
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
