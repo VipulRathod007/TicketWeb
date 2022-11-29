@@ -51,10 +51,11 @@ class TicketFactory:
     def generate(self) -> Image:
         templateImg = Image.open(self.__mTemplatePath)
         imgInst = ImageDraw.Draw(templateImg)
-        imgInst.text(self.__mTicketIDAddr, str(self.__mTicket.ID), font=ImageFont.truetype('segoeui.ttf', 36))
-        imgInst.text(self.__mBuyerNameAddr, str(self.__mTicket.Buyer), font=ImageFont.truetype('segoeui.ttf', 36))
-        imgInst.text(self.__mSeatsAddr, self.__mSeats, font=ImageFont.truetype('segoeui.ttf', 36))
-        imgInst.text(self.__mSeatCountAddr, str(self.__mTicket.Seats), font=ImageFont.truetype('segoeui.ttf', 36))
+        fontName = 'times.ttf'
+        imgInst.text(self.__mTicketIDAddr, str(self.__mTicket.ID), font=ImageFont.truetype(fontName, 36))
+        imgInst.text(self.__mBuyerNameAddr, str(self.__mTicket.Buyer), font=ImageFont.truetype(fontName, 36))
+        imgInst.text(self.__mSeatsAddr, self.__mSeats, font=ImageFont.truetype(fontName, 36))
+        imgInst.text(self.__mSeatCountAddr, str(self.__mTicket.Seats), font=ImageFont.truetype(fontName, 36))
         qrImg = qrcode.make(self.__mTicket.QRData)
         templateImg.paste(qrImg.get_image().resize((250, 250)), self.__mTicketQRCodeAddr)
         templateImg.mode = 'RGB'
