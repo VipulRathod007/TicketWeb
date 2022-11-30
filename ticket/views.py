@@ -18,6 +18,7 @@ with open('config.json', 'r') as file:
 def __generateTicket(inTicket: Ticket) -> HttpResponse:
     templatePath = os.path.join(settings.BASE_DIR, 'assets/front.png')
     factory = TicketFactory(inTicket.name, inTicket.contact, inTicket.seats, inTicket.total, inTicket.refId, templatePath)
+    factory.FontPath = 'static/Segoe-UI-Font/SEGOEUI.TTF'
     factory.AddrSeats = (1600, 380)
     factory.AddrSeatCount = (1850, 380)
     factory.AddrTicketID = (1675, 445)

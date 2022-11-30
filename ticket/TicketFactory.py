@@ -1,3 +1,5 @@
+import os.path
+
 import qrcode
 from PIL import Image
 from PIL import ImageDraw
@@ -39,6 +41,7 @@ class TicketFactory:
     """Represents Tickets Factory class"""
 
     def __init__(self, inBuyerName: str, inContactNum: int, inSeats: str, inSeatCount: int, inTicketID: int, inTemplatePath: str):
+        self.__mFontPath = None
         self.__mSeatsAddr = (0, 0)
         self.__mBuyerNameAddr = (0, 0)
         self.__mTicketQRCodeAddr = (0, 0)
@@ -51,7 +54,7 @@ class TicketFactory:
     def generate(self) -> Image:
         templateImg = Image.open(self.__mTemplatePath)
         imgInst = ImageDraw.Draw(templateImg)
-        fontName = 'times.ttf'
+        fontName = self.__mFontPath
         imgInst.text(self.__mTicketIDAddr, str(self.__mTicket.ID), font=ImageFont.truetype(fontName, 36))
         imgInst.text(self.__mBuyerNameAddr, str(self.__mTicket.Buyer), font=ImageFont.truetype(fontName, 36))
         imgInst.text(self.__mSeatsAddr, self.__mSeats, font=ImageFont.truetype(fontName, 36))
@@ -61,6 +64,14 @@ class TicketFactory:
         templateImg.mode = 'RGB'
         # templateImg.show()
         return templateImg
+
+    @property
+    def FontPath(self):
+        return self.__mFontPath
+
+    @FontPath.setter
+    def FontPath(self, inPath: str):
+        self.__mFontPath = inPath
 
     @property
     def AddrSeatCount(self):
