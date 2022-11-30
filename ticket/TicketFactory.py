@@ -60,7 +60,7 @@ class TicketFactory:
         imgInst.text(self.__mSeatsAddr, self.__mSeats, font=ImageFont.truetype(fontName, 36))
         imgInst.text(self.__mSeatCountAddr, str(self.__mTicket.Seats), font=ImageFont.truetype(fontName, 36))
         qrImg = qrcode.make(self.__mTicket.QRData)
-        templateImg.paste(qrImg.get_image().resize((250, 250)), self.__mTicketQRCodeAddr)
+        templateImg.paste(qrImg.get_image().resize((180, 180)), self.__mTicketQRCodeAddr)
         templateImg.mode = 'RGB'
         # templateImg.show()
         return templateImg

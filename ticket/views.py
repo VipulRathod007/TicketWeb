@@ -16,14 +16,14 @@ with open('config.json', 'r') as file:
 
 
 def __generateTicket(inTicket: Ticket) -> HttpResponse:
-    templatePath = os.path.join(settings.BASE_DIR, 'assets/front.png')
+    templatePath = os.path.join(settings.BASE_DIR, 'static/front.jpeg')
     factory = TicketFactory(inTicket.name, inTicket.contact, inTicket.seats, inTicket.total, inTicket.refId, templatePath)
     factory.FontPath = 'static/Segoe-UI-Font/SEGOEUI.TTF'
-    factory.AddrSeats = (1600, 380)
-    factory.AddrSeatCount = (1850, 380)
-    factory.AddrTicketID = (1675, 445)
-    factory.AddrTicketQRCode = (1590, 85)
-    factory.AddrBuyerName = (110, 325)
+    factory.AddrSeats = (1280, 300)
+    factory.AddrSeatCount = (1475, 300)
+    factory.AddrTicketID = (1325, 350)
+    factory.AddrTicketQRCode = (1275, 105)
+    factory.AddrBuyerName = (110, 250)
     buff = io.BytesIO()
     factory.generate().save(buff, 'jpeg')
     response = HttpResponse(buff.getvalue(), content_type='image/jpeg')
