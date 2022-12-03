@@ -104,11 +104,13 @@ def book(request):
             return redirect(to='home')
         target = Ticket.objects.filter(seatRow=row)
         if len(target) > 0:
-            for col in range(fromNum, to + 1):
-                target = Ticket.objects.filter(seatRow=row).filter(seatNum=col).first()
-                if target is not None:
-                    messages.error(request, f'Seat {row}{col} is already booked')
-                    return redirect(to='home')
+            for ticket in target:
+                # target = Ticket.objects.filter(seatRow=row).filter(seatNum=col).first()
+                bookedCols = list(map(int, ticket.seatNum.split(',')))
+                for _ in range(fromNum, to + 1):
+                    if _ in bookedCols:
+                        messages.error(request, f'Seat {row}{_} is already booked')
+                        return redirect(to='home')
         if ticketCount == 1:
             seats = f'{row}{fromNum}'
         else:
@@ -118,8 +120,9 @@ def book(request):
             newTicket.name = name
             newTicket.contact = contact
             newTicket.refId = int(datetime.now().timestamp())
+            newTicket.total = ticketCount
             newTicket.seatRow = row
-            newTicket.seatNum = int(''.join([str(_) for _ in range(fromNum, to + 1)]))
+            newTicket.seatNum = ','.join([str(_) for _ in range(fromNum, to + 1)])
             newTicket.url = f'{name}_{newTicket.refId}.jpg'
             newTicket.seats = seats
             newTicket.save()
