@@ -62,7 +62,6 @@ class TicketFactory:
         qrImg = qrcode.make(self.__mTicket.QRData)
         templateImg.paste(qrImg.get_image().resize((180, 180)), self.__mTicketQRCodeAddr)
         templateImg.mode = 'RGB'
-        # templateImg.show()
         return templateImg
 
     @property
